@@ -1,66 +1,94 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:window_size/window_size.dart';
+import './views/splash/splash.dart';
+import './bloc/login/login_bloc.dart';
+import './data/repo/auth_repo.dart';
+import './data/repo/user_repo.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowMinSize(const Size(414, 896));
+    setWindowMaxSize(Size.infinite);
+    setWindowTitle("TheSiS");
+  }
+  runApp(App(
+    loginRepository: LoginRepository(),
+    userRepository: UserRepository(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class App extends StatelessWidget {
+  const App({
+    Key? key,
+    required this.loginRepository,
+    required this.userRepository,
+  }) : super(key: key);
+
+  final LoginRepository loginRepository;
+  final UserRepository userRepository;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return RepositoryProvider.value(
+      value: loginRepository,
+      child: BlocProvider(
+        create: (_) => LoginBloc(
+          loginRepository: loginRepository,
+          userRepository: userRepository,
+        ),
+        child: const AppView(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+class AppView extends StatefulWidget {
+  const AppView({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<AppView> createState() => _AppViewState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _AppViewState extends State<AppView> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  NavigatorState get _navigator => _navigatorKey.currentState!;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      navigatorKey: _navigatorKey,
+      builder: (context, child) {
+        return BlocListener<LoginBloc, LoginState>(
+          listener: (context, state) {
+            switch (state.status) {
+              case LoginStatus.authenticated:
+                _navigator.pushAndRemoveUntil(
+                  SplashPage.route(),
+                  (route) => false,
+                );
+                break;
+              case LoginStatus.unauthenticated:
+                _navigator.pushAndRemoveUntil<void>(
+                  SplashPage.route(),
+                  (route) => false,
+                );
+                break;
+              default:
+                break;
+            }
+          },
+          child: child,
+        );
+      },
+      onGenerateRoute: (_) => SplashPage.route(),
     );
   }
 }

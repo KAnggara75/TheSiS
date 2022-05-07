@@ -1,7 +1,7 @@
 name: thesis
 description: The Secure System.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 0.1.3
+version: 0.1.5
 
 environment:
   sdk: ">=2.16.2 <3.0.0"

@@ -1,13 +1,13 @@
 import 'dart:async';
 
-enum LoginStatus { unknown, authenticated, unauthenticated }
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
-class LoginRepository {
-  final _controller = StreamController<LoginStatus>();
+class AuthenticationRepository {
+  final _controller = StreamController<AuthenticationStatus>();
 
-  Stream<LoginStatus> get status async* {
+  Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
-    yield LoginStatus.unauthenticated;
+    yield AuthenticationStatus.unauthenticated;
     yield* _controller.stream;
   }
 
@@ -17,12 +17,12 @@ class LoginRepository {
   }) async {
     await Future.delayed(
       const Duration(milliseconds: 300),
-      () => _controller.add(LoginStatus.authenticated),
+      () => _controller.add(AuthenticationStatus.authenticated),
     );
   }
 
   void logOut() {
-    _controller.add(LoginStatus.unauthenticated);
+    _controller.add(AuthenticationStatus.unauthenticated);
   }
 
   void dispose() => _controller.close();

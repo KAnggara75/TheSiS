@@ -1,21 +1,28 @@
 part of 'login_bloc.dart';
 
-@immutable
 class LoginState extends Equatable {
-  const LoginState._({
-    this.status = LoginStatus.unknown,
-    this.user = User.empty,
+  const LoginState({
+    this.status = FormzStatus.pure,
+    this.username = const Username.pure(),
+    this.password = const Password.pure(),
   });
 
-  const LoginState.unknown() : this._();
+  final FormzStatus status;
+  final Username username;
+  final Password password;
 
-  const LoginState.authenticated(User user) : this._(status: LoginStatus.authenticated, user: user);
-
-  const LoginState.unauthenticated() : this._(status: LoginStatus.unauthenticated);
-
-  final LoginStatus status;
-  final User user;
+  LoginState copyWith({
+    FormzStatus? status,
+    Username? username,
+    Password? password,
+  }) {
+    return LoginState(
+      status: status ?? this.status,
+      username: username ?? this.username,
+      password: password ?? this.password,
+    );
+  }
 
   @override
-  List<Object> get props => [status, user];
+  List<Object> get props => [status, username, password];
 }

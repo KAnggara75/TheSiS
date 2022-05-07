@@ -1,44 +1,52 @@
-import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:window_size/window_size.dart';
-import './views/splash/splash.dart';
-import './bloc/login/login_bloc.dart';
 import './data/repo/auth_repo.dart';
 import './data/repo/user_repo.dart';
+import './bloc/auth/auth_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import './views/screens/splash/splash.dart';
+import 'package:window_size/window_size.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import './views/screens/auth/login.dart';
+import './views/screens/intro/intro.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    setWindowMinSize(const Size(414, 896));
-    setWindowMaxSize(Size.infinite);
-    setWindowTitle("TheSiS");
+  if (defaultTargetPlatform == TargetPlatform.linux ||
+      defaultTargetPlatform == TargetPlatform.macOS ||
+      defaultTargetPlatform == TargetPlatform.windows) {
+    if (!kIsWeb) {
+      setWindowMinSize(const Size(360, 720));
+      setWindowMaxSize(Size.infinite);
+      setWindowTitle("TheSiS");
+    }
   }
-  runApp(App(
-    loginRepository: LoginRepository(),
-    userRepository: UserRepository(),
-  ));
+  runApp(
+    App(
+      authenticationRepository: AuthenticationRepository(),
+      userRepository: UserRepository(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
   const App({
     Key? key,
-    required this.loginRepository,
     required this.userRepository,
+    required this.authenticationRepository,
   }) : super(key: key);
 
-  final LoginRepository loginRepository;
+  final AuthenticationRepository authenticationRepository;
   final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: loginRepository,
+      value: authenticationRepository,
       child: BlocProvider(
-        create: (_) => LoginBloc(
-          loginRepository: loginRepository,
+        create: (_) => AuthenticationBloc(
+          authenticationRepository: authenticationRepository,
           userRepository: userRepository,
         ),
         child: const AppView(),
@@ -51,7 +59,7 @@ class AppView extends StatefulWidget {
   const AppView({Key? key}) : super(key: key);
 
   @override
-  State<AppView> createState() => _AppViewState();
+  _AppViewState createState() => _AppViewState();
 }
 
 class _AppViewState extends State<AppView> {
@@ -66,18 +74,18 @@ class _AppViewState extends State<AppView> {
       debugShowCheckedModeBanner: false,
       navigatorKey: _navigatorKey,
       builder: (context, child) {
-        return BlocListener<LoginBloc, LoginState>(
+        return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
             switch (state.status) {
-              case LoginStatus.authenticated:
-                _navigator.pushAndRemoveUntil(
-                  SplashPage.route(),
+              case AuthenticationStatus.authenticated:
+                _navigator.pushAndRemoveUntil<void>(
+                  IntroPage.route(),
                   (route) => false,
                 );
                 break;
-              case LoginStatus.unauthenticated:
+              case AuthenticationStatus.unauthenticated:
                 _navigator.pushAndRemoveUntil<void>(
-                  SplashPage.route(),
+                  LoginPage.route(),
                   (route) => false,
                 );
                 break;

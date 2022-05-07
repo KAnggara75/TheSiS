@@ -1,69 +1,62 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
+import 'package:formz/formz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
-import '../../data/model/user_model.dart';
+import '../../data/model/password.dart';
+import '../../data/model/username.dart';
 import '../../data/repo/auth_repo.dart';
-import '../../data/repo/user_repo.dart';
-
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
-    required LoginRepository loginRepository,
-    required UserRepository userRepository,
-  })  : _loginRepository = loginRepository,
-        _userRepository = userRepository,
-        super(const LoginState.unknown()) {
-    on<LoginStatusChanged>(_onLoginStatusChanged);
-    on<LogoutRequested>(_onLogoutRequested);
-    _loginStatusSubscription = _loginRepository.status.listen(
-      (status) => add(LoginStatusChanged(status)),
-    );
+    required AuthenticationRepository authenticationRepository,
+  })  : _authenticationRepository = authenticationRepository,
+        super(const LoginState()) {
+    on<LoginUsernameChanged>(_onUsernameChanged);
+    on<LoginPasswordChanged>(_onPasswordChanged);
+    on<LoginSubmitted>(_onSubmitted);
   }
 
-  final LoginRepository _loginRepository;
-  final UserRepository _userRepository;
-  late StreamSubscription<LoginStatus> _loginStatusSubscription;
+  final AuthenticationRepository _authenticationRepository;
 
-  @override
-  Future<void> close() {
-    _loginStatusSubscription.cancel();
-    _loginRepository.dispose();
-    return super.close();
-  }
-
-  void _onLoginStatusChanged(
-    LoginStatusChanged event,
-    Emitter<LoginState> emit,
-  ) async {
-    switch (event.status) {
-      case LoginStatus.unauthenticated:
-        return emit(const LoginState.unauthenticated());
-      case LoginStatus.authenticated:
-        final user = await _tryGetUser();
-        return emit(user != null ? LoginState.authenticated(user) : const LoginState.unauthenticated());
-      default:
-        return emit(const LoginState.unknown());
-    }
-  }
-
-  void _onLogoutRequested(
-    LogoutRequested event,
+  void _onUsernameChanged(
+    LoginUsernameChanged event,
     Emitter<LoginState> emit,
   ) {
-    _loginRepository.logOut();
+    final username = Username.dirty(event.username);
+    emit(state.copyWith(
+      username: username,
+      status: Formz.validate([state.password, username]),
+    ));
   }
 
-  Future<User?> _tryGetUser() async {
-    try {
-      final user = await _userRepository.getUser();
-      return user;
-    } catch (_) {
-      return null;
+  void _onPasswordChanged(
+    LoginPasswordChanged event,
+    Emitter<LoginState> emit,
+  ) {
+    final password = Password.dirty(event.password);
+    emit(state.copyWith(
+      password: password,
+      status: Formz.validate([password, state.username]),
+    ));
+  }
+
+  void _onSubmitted(
+    LoginSubmitted event,
+    Emitter<LoginState> emit,
+  ) async {
+    if (state.status.isValidated) {
+      emit(state.copyWith(status: FormzStatus.submissionInProgress));
+      try {
+        await _authenticationRepository.logIn(
+          username: state.username.value,
+          password: state.password.value,
+        );
+        emit(state.copyWith(status: FormzStatus.submissionSuccess));
+      } catch (_) {
+        emit(state.copyWith(status: FormzStatus.submissionFailure));
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 name: thesis
 description: The Secure System.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 0.0.1
 
@@ -20,7 +20,7 @@ dependencies:
     sdk: flutter
   window_size:
     git:
-      url: git://github.com/google/flutter-desktop-embedding.git
+      url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
       ref: a738913c8ce2c9f47515382d40827e794a334274
 
@@ -32,7 +32,6 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
-
   uses-material-design: true
   assets:
     - assets/fonts/poppins/

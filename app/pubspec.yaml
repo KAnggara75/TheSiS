@@ -1,10 +1,10 @@
 name: thesis
 description: The Secure System.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 0.1.5
+version: 0.1.4
 
 environment:
-  sdk: ">=2.16.2 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   bloc: ^8.0.3
@@ -23,7 +23,7 @@ dependencies:
       ref: a738913c8ce2c9f47515382d40827e794a334274
 
 dev_dependencies:
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.0
   bloc_test: ^9.0.3
   mocktail: ^0.3.0
   flutter_test:

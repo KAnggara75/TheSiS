@@ -15,6 +15,7 @@ jobs:
       - name: 📁 Remove Unused Files and Dir
         run: |
           rm -rf app docs uno README.md
+          ls -lah
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:

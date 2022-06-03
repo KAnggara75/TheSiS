@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
+      - name: Write Env
+        run: echo ${{ secrets.WEB_ENV }} | base64 --decode > api/.env
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:

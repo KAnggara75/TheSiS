@@ -1,0 +1,20 @@
+name: 🚀 Run API Migrations
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  web-deploy:
+    name: 🛰 API Migrations
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.head_commit.message, '#migrate') }}
+    steps:
+      - name: 📦 Run Migrate
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SOP_HOST }}
+          username: ${{ secrets.SOP_SSH_USERNAME }}
+          password: ${{ secrets.SOP_SSH_PASSWORD }}
+          port: ${{ secrets.SOP_SSH_PORT }}
+          script: cd public_html/kame/thesis && php artisan migrate:fresh --seed --force

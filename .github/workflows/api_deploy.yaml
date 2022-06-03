@@ -18,7 +18,7 @@ jobs:
           server: ${{ secrets.SOP_HOST }}
           username: ${{ secrets.SOP_SSH_USERNAME }}
           password: ${{ secrets.SOP_SSH_PASSWORD }}
-          server-dir: /home/sopfurni/public_html/kame/thesis/
+          server-dir: public_html/kame/thesis/
           local-dir: ./api/
       - name: 📦 Composer install
         uses: appleboy/ssh-action@master

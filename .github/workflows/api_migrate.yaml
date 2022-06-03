@@ -17,4 +17,4 @@ jobs:
           username: ${{ secrets.SOP_SSH_USERNAME }}
           password: ${{ secrets.SOP_SSH_PASSWORD }}
           port: ${{ secrets.SOP_SSH_PORT }}
-          script: cd public_html/kame/thesis && php artisan migrate:fresh --seed --force
+          script: cd /home/sopfurni/public_html/kame/thesis && php artisan migrate:fresh --seed --force

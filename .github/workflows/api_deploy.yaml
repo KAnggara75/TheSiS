@@ -12,10 +12,6 @@ jobs:
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
-      - name: 📁 Remove Unused Files and Dir
-        run: |
-          rm -rf app docs uno README.md LICENSE
-          ls -lah
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:

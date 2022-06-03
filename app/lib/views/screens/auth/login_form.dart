@@ -4,6 +4,10 @@ import 'package:formz/formz.dart';
 
 import '../../../bloc/login/login_bloc.dart';
 
+TextEditingController pass = TextEditingController();
+
+TextEditingController user = TextEditingController();
+
 class LoginForm extends StatelessWidget {
   const LoginForm({Key? key}) : super(key: key);
 
@@ -36,45 +40,6 @@ class LoginForm extends StatelessWidget {
   }
 }
 
-class _UsernameInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.username != current.username,
-      builder: (context, state) {
-        return TextField(
-          key: const Key('loginForm_usernameInput_textField'),
-          onChanged: (username) => context.read<LoginBloc>().add(LoginUsernameChanged(username)),
-          decoration: InputDecoration(
-            labelText: 'username',
-            errorText: state.username.invalid ? 'invalid username' : null,
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _PasswordInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.password != current.password,
-      builder: (context, state) {
-        return TextField(
-          key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) => context.read<LoginBloc>().add(LoginPasswordChanged(password)),
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: 'password',
-            errorText: state.password.invalid ? 'invalid password' : null,
-          ),
-        );
-      },
-    );
-  }
-}
-
 class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -85,14 +50,87 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 key: const Key('loginForm_continue_raisedButton'),
-                child: const Text('Login'),
                 onPressed: state.status.isValidated
                     ? () {
                         context.read<LoginBloc>().add(const LoginSubmitted());
                         print('Login button pressed');
                       }
                     : null,
+                child: const Text('Login'),
               );
+      },
+    );
+  }
+}
+
+bool _hidePass = true;
+void showHide() {}
+
+class _PasswordInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (previous, current) => previous.password != current.password,
+      builder: (context, state) {
+        return TextField(
+          controller: pass,
+          key: const Key('loginForm_passwordInput_textField'),
+          onChanged: (password) => context.read<LoginBloc>().add(
+                LoginPasswordChanged(password),
+              ),
+          obscureText: _hidePass,
+          decoration: InputDecoration(
+            labelText: 'Password',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+            ),
+            fillColor: Colors.white,
+            filled: true,
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            suffixIcon: IconButton(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.visibility,
+                )),
+            errorText: state.password.invalid ? 'invalid password' : null,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _UsernameInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (previous, current) => previous.username != current.username,
+      builder: (context, state) {
+        return TextField(
+          controller: user,
+          keyboardType: TextInputType.emailAddress,
+          key: const Key('loginForm_usernameInput_textField'),
+          onChanged: (username) => context.read<LoginBloc>().add(LoginUsernameChanged(username)),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+            ),
+            labelText: 'Username',
+            fillColor: Colors.white,
+            filled: true,
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            suffixIcon: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.mail,
+              ),
+            ),
+            errorText: state.username.invalid ? 'invalid username' : null,
+          ),
+        );
       },
     );
   }

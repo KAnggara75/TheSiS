@@ -9,13 +9,10 @@ jobs:
     name: Create version number
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-        with:
-          repository: KAnggara75/thesis
-          token: ${{ secrets.GH_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - name: Fetch all history for all tags and branches
-        run: |
-          git fetch --prune --unshallow
+        run: git fetch --prune --unshallow
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.13
         with:

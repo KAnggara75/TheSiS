@@ -10,10 +10,11 @@ class UserSeeder extends Seeder
 	public function run()
 	{
 		User::create([
+			'status' => 1,
 			'name' => "Admin",
 			'email' => "a@b.c",
+			'token' => "F3HUqc56",
 			'password' => bcrypt('llllllll'),
-			'status' => 1,
 		]);
 	}
 }

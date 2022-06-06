@@ -13,6 +13,7 @@ return new class extends Migration
 			$table->string('name');
 			$table->string('email')->unique();
 			$table->string('password');
+			$table->string('token')->nullable();
 			$table->integer('status')->default(0);
 			$table->timestamps();
 		});

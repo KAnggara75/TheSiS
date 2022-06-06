@@ -9,7 +9,7 @@ class ControlFactory extends Factory
 	public function definition()
 	{
 		return [
-			'board_id' => random_int(1, 5),
+			'board_id' => 1,
 			'alarm'    => random_int(0, 1),
 			'mesin'    => random_int(0, 1),
 			'listrik'  => random_int(0, 1),

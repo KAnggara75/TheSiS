@@ -1,8 +1,8 @@
 import 'package:http/http.dart' as http;
 
 class BaseUrl {
-  static String baseUrl = "http://api.test/";
-  // static String baseUrl = "https://thesis.kanggara.me/";
+  // static String baseUrl = "http://api.test/";
+  static String baseUrl = "https://thesis.kanggara.me/";
 
   static String login = "${baseUrl}api/login";
   static String register = "${baseUrl}api/register";

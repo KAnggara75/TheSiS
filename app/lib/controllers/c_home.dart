@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:thesis/models/m_board.dart';
+import '../../models/m_board.dart';
 import '../service/s_board.dart';
 import '../service/s_location.dart';
 import '../views/home/v_home.dart';
@@ -20,6 +20,7 @@ abstract class HomeController extends State<HomeBody> {
   double lon = 0;
   double lat = 0;
   bool locationStatus = false;
+  bool isKm = false;
 
   @override
   void initState() {
@@ -60,7 +61,13 @@ abstract class HomeController extends State<HomeBody> {
     var i = asin(sqrt(sin(g) + (cos(lat1) * cos(lat2) * sin(h))));
 
     double d = double.parse((2 * R * i).toStringAsFixed(2));
-    return d;
+    if (d > 1000) {
+      isKm = true;
+      return double.parse((d / 1000).toStringAsFixed(2));
+    } else {
+      isKm = false;
+      return d;
+    }
   }
 
   getPref() async {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thesis/models/m_board.dart';
+import '../../models/m_board.dart';
 import '../../constant/size.dart';
 import '../../widget/w_card.dart';
 import '../../widget/w_title.dart';
@@ -75,7 +75,7 @@ class _HomeBodyState extends HomeController {
                             snapshot.data!.location.last.lat,
                             snapshot.data!.location.last.lon,
                           )}",
-                          subtitle: "Km",
+                          subtitle: isKm ? "Km" : "Meter",
                         );
                       } else if (snapshot.hasError) {
                         return const CardMini(

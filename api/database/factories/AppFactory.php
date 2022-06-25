@@ -9,7 +9,7 @@ class AppFactory extends Factory
 	public function definition()
 	{
 		return [
-			'user_id' => random_int(1, 2),
+			'user_id' => 1,
 			'lat' => 1.6714782,
 			'lon' => 101.4225598,
 		];

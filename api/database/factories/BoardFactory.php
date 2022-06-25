@@ -10,7 +10,7 @@ class BoardFactory extends Factory
 	{
 		return [
 			'board' => $this->faker->name(),
-			'user_id' => random_int(1, 2),
+			'user_id' => 1,
 		];
 	}
 }

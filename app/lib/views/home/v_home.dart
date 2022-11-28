@@ -19,9 +19,7 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends HomeController {
   @override
   Widget build(BuildContext context) {
-    // Add french messages
     timeago.setLocaleMessages('id', timeago.IdMessages());
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
